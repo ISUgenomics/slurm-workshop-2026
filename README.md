@@ -7,6 +7,34 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 - Learn when to use **GNU Parallel** vs. **Slurm Job Arrays**.
 - Master the syntax for running thousands of jobs without crashing the scheduler.
 
+## Workshop Map
+
+```mermaid
+mindmap
+  root((Slurm Workshop))
+    Setup
+      VSCode OnDemand
+      Data Generation
+    Module 1: Efficiency
+      Benchmarking
+      seff tool
+      Resource Estimation
+    Module 2: Parallelism
+      Avoid Looping sbatch
+      GNU Parallel
+      Packing Short Tasks
+    Module 3: Arrays
+      Job Arrays
+      Index Mapping
+      Independent Logs
+    Module 4: Advanced
+      Decision Matrix
+      Task Grouping
+      Managing Failures
+```
+
+![Slurm Workshop Mindmap](images/mindmap.png)
+
 ## Curriculum
 
 ### [0. Setup & Prerequisites](./00_setup.md)
