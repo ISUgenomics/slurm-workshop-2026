@@ -2,26 +2,6 @@
 
 **Workshop Duration Estimate: ~4 Hours**
 
-### Suggested Timeline
-* **0:00 - 1:00 (60 mins) | Part 1: Building and Benchmarking Scripts** 
-  * Understanding nodes, exploring data (15 mins)
-  * Running single tasks and analyzing time (15 mins)
-  * Sequential loops to GNU Parallel and robust scripts (30 mins)
-* **1:00 - 1:15 (15 mins) | Break**
-* **1:15 - 1:45 (30 mins) | Part 2: Introduction to SLURM Basics**
-  * Core SLURM concepts and keywords (15 mins)
-  * Essential commands and interactive jobs via `srun` (15 mins)
-* **1:45 - 2:30 (45 mins) | Part 3: Submitting Batch Jobs**
-  * Converting bash scripts to SLURM batch jobs (`sbatch`) (20 mins)
-  * Job submission, logs, and monitoring (10 mins)
-  * Assessing efficiency with `seff` (15 mins)
-* **2:30 - 2:40 (10 mins) | Break**
-* **2:40 - 3:40 (60 mins) | Part 4: Scaling with SLURM Arrays**
-  * Creating and submitting Array scripts (25 mins)
-  * Advanced monitoring with `sacct` (20 mins)
-  * GNU Parallel vs. SLURM Arrays comparison (15 mins)
-* **3:40 - 4:00 (20 mins) | Q&A and Wrap-up**
-
 ---
 
 ## Part 1: Running commands and making a script of the commands run
@@ -39,7 +19,6 @@
 ### What is a compute node?
 
 - A compute node is a node that is used to run your intensive jobs.
-
 
 ### What are the files in the data folder?
 
