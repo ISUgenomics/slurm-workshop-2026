@@ -521,7 +521,7 @@ If you remember just one thing: you don’t run heavy work directly on the head 
 - **Partition (queue)**: A grouping of nodes with certain limits (e.g., time, size). You submit jobs to a partition.
 - **Account**: The project or allocation that pays for/authorizes compute usage.
 - **Resources**: CPUs/cores, memory (RAM), time limit.
-- **Job states**: PENDING (waiting), RUNNING, COMPLETED, FAILED/CANCELLED.
+- **Job states**: PENDING (PD, waiting), RUNNING (R), COMPLETED (CD), FAILED (F), CANCELLED (CA).
 
 ---
 
@@ -540,6 +540,12 @@ squeue -u $USER
 
 # What partitions exist? (short summary)
 sinfo
+
+# What partitions exist? (detailed summary)
+sinfo -p <partition_name>
+
+# Submit a batch job
+sbatch <script_name.slurm>
 
 # Cancel a job by its Job ID
 scancel <JOBID>
@@ -567,7 +573,7 @@ We are going to use the `05_fastqc_parallel_improved.sh` script as an example. I
 #SBATCH --partition=interactive           # partition/queue
 #SBATCH --time=00:05:00                   # max wall time (hh:mm:ss)
 #SBATCH --nodes=1                         # number of nodes
-#SBATCH --cpus-per-task=10                 # number of CPU cores
+#SBATCH --cpus-per-task=10                # number of CPU cores
 #SBATCH --mem=8G                          # memory per node
 #SBATCH --output=logs/%x_%j.out           # STDOUT (%x=job-name, %j=jobid)
 #SBATCH --error=logs/%x_%j.err            # STDERR
