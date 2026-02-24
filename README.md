@@ -2,6 +2,14 @@
 
 Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you move beyond basic job submission and master efficient, scalable computing on the University Cluster.
 
+## Instructors
+- Viswanathan Satheesh
+- Rick Masonbrink
+- SharuPaul Sharma
+
+## Email: 
+If you have any questions/suggestions: gifhelp@iastate.edu
+
 ## Workshop Goals
 - Understand how to measure and optimize job efficiency (`seff`).
 - Learn when to use **GNU Parallel** vs. **Slurm Job Arrays**.
