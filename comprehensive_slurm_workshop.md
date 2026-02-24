@@ -2,26 +2,6 @@
 
 **Workshop Duration Estimate: ~4 Hours**
 
-### Suggested Timeline
-* **0:00 - 1:00 (60 mins) | Part 1: Building and Benchmarking Scripts** 
-  * Understanding nodes, Workspace Setup, and Interactive sessions (`srun`) (20 mins)
-  * Data exploration, single tasks, and analyzing time (15 mins)
-  * Sequential loops to GNU Parallel (25 mins)
-* **1:00 - 1:15 (15 mins) | Break**
-* **1:15 - 2:00 (45 mins) | Part 2: Introduction to SLURM & Batch Jobs**
-  * Core SLURM concepts and commands (10 mins)
-  * Submitting batch jobs (`sbatch`) and logs (15 mins)
-  * Assessing efficiency (`seff`) and Debugging failures (20 mins)
-* **2:00 - 2:10 (10 mins) | Break**
-* **2:10 - 3:20 (70 mins) | Part 3: Scaling with SLURM Arrays**
-  * Concepts: What is an array and why use it? (10 mins)
-  * Creating and submitting Array scripts (30 mins)
-  * Advanced monitoring with `sacct` and "Swiss Cheese" retries (30 mins)
-* **3:20 - 4:00 (40 mins) | Part 4: Strategy, Flowcharts & Wrap-up**
-  * Decision Matrices: GNU Parallel vs SLURM Arrays (15 mins)
-  * Real-world scenarios walkthrough (10 mins)
-  * Q&A and final wrap-up (15 mins)
-
 ---
 
 ## Quick start
