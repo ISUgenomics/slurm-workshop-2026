@@ -12,47 +12,35 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 ```mermaid
 mindmap
   root((Slurm Workshop))
-    Setup
-      VSCode OnDemand
-      Data Generation
-    Module 1: Efficiency
+    Part 1: Scripts
+      Workspace Setup
       Benchmarking
-      seff tool
-      Resource Estimation
-    Module 2: Parallelism
-      Avoid Looping sbatch
       GNU Parallel
-      Packing Short Tasks
-    Module 3: Arrays
+    Part 2: Batch Jobs
+      SLURM Basics
+      Job Submission
+      Efficiency (seff)
+    Part 3: Arrays
       Job Arrays
-      Index Mapping
-      Independent Logs
-    Module 4: Advanced
+      Task Logs
+      Failure Recovery
+    Part 4: Strategy
       Decision Matrix
-      Task Grouping
-      Managing Failures
+      Real-World Scenarios
 ```
-
-![Slurm Workshop Mindmap](images/mindmap.png)
 
 ## Curriculum
 
-### [0. Setup & Prerequisites](./00_setup.md)
-Getting connected to the cluster (VSCode OnDemand) and generating the workshop test data.
+The workshop material is split into two halves, optimized for a 4-hour session:
 
-### [1. Efficiency Basics](./01_efficiency_basics.md)
-Stop guessing resources! Learn to benchmark your jobs and request exactly what you need.
+### [Part 1 & 2: Scripts and Batch Jobs](./comprehensive_part1.md)
+* **Part 1: Building and Benchmarking Scripts** - Setting up the workspace, analyzing running times, and migrating from sequential loops to GNU Parallel.
+* **Part 2: Introduction to SLURM & Batch Jobs** - Core concepts, submitting `sbatch` scripts, assessing resource efficiency with `seff`, and tracking down errors in failed jobs.
 
-### [2. Parallelism Strategies](./02_parallelism_strategies.md)
-Why looping `sbatch` is bad, and how to use GNU Parallel to pack short tasks into efficient jobs.
-
-### [3. Slurm Job Arrays](./03_slurm_arrays.md)
-The "correct" way to handle batch processing. Syntax, file mapping, and logging.
-
-### [4. Advanced Management](./04_advanced_management.md)
-Decision matrices, task grouping, and managing massive workflows.
+### [Part 3 & 4: Arrays and Strategy](./comprehensive_part2.md)
+* **Part 3: Scaling with SLURM Arrays** - Replacing manual loops with Job Arrays, mapping inputs to array indices, recording separate logs, and isolating failed tasks.
+* **Part 4: Strategy, Flowcharts & Wrap-up** - Using the decision matrix to pick the right strategy for your pipeline—whether that's GNU Parallel, SLURM arrays, or task grouping.
 
 ## Getting Started
-1. Clone this repository or copy the files to your cluster workspace.
-2. Follow the instructions in [00_setup.md](./00_setup.md) to generate the dummy data.
-3. Proceed through the modules in order.
+1. Connect to the cluster via **VSCode OnDemand**.
+2. Follow the setup and preamble instructions at the very beginning of [Part 1 & 2](./comprehensive_part1.md) to initialize your workspace and start the workshop!
