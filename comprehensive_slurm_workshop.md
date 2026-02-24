@@ -24,6 +24,33 @@
 
 ---
 
+## Quick start
+
+- VS Code Server on Nova OnDemand through a browser: `https://nova-ondemand.its.iastate.edu/`
+
+  ```
+  Account: short_term
+  Partition: interactive
+  Number of hour: 4
+  Number of Tasks per node: 10
+  Memory Required: 8G
+  Working Directory: /work/short_term/slurm_workshop
+  ```
+
+- Create a directory for each user
+
+```bash
+mkdir -p $USER
+cd $USER
+```
+
+- Copy the data to your directory
+
+```bash
+cp -r /work/short_term/satheesh/01_data .
+```
+
+
 ## Part 1: Running commands and making a script of the commands run
 
 ### What is a job?
@@ -39,20 +66,6 @@
 ### What is a compute node?
 
 - A compute node is a node that is used to run your intensive jobs.
-
-
-
-### Step 0: Workspace Setup
-
-Before we start running commands, let's navigate to our working directory and prepare the data.
-
-```bash
-# Navigate to your scratch or working directory
-cd /path/to/your/workspace
-
-# Copy or setup workshop data
-./setup_data.sh
-```
 
 ---
 
