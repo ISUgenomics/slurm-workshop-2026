@@ -28,6 +28,7 @@ cd $USER
 
 ```bash
 cp -r /work/short_term/satheesh/01_data .
+git clone https://github.com/ISUgenomics/slurm-workshop-2026.git
 ```
 
 
