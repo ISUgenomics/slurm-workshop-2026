@@ -9,8 +9,8 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=2G
 # Use master job ID (%A) and array index (%a) for per-task logs
-#SBATCH --output=logs/%x_%A_%a.out
-#SBATCH --error=logs/%x_%A_%a.err
+#SBATCH --output=slurm_logs/%x_%A_%a.out
+#SBATCH --error=slurm_logs/%x_%A_%a.err
 #SBATCH --array=0-9
 
 set -euo pipefail
@@ -20,10 +20,11 @@ cd "$SLURM_SUBMIT_DIR"
 
 # Output directory 
 OUTPUT_DIR=08_fastqc_slurm_array
-LOG_DIR=logs
+SLURM_LOGS=slurm_logs
+APP_LOGS=app_logs
 
 # Ensure output directories exist
-mkdir -p logs $OUTPUT_DIR
+mkdir -p $SLURM_LOGS $APP_LOGS $OUTPUT_DIR
 
 # Load modules needed by the job
 module load fastqc || true
@@ -36,4 +37,4 @@ TARGET="${FILES[$SLURM_ARRAY_TASK_ID]}"
 sample_id=$(basename "$TARGET" .fastq.gz)        # e.g., bio_sample_01_R1
 
 fastqc "$TARGET" -o $OUTPUT_DIR/ \
-  > "$LOG_DIR/06_fastqc_slurm_array_${sample_id}.log" 2>&1
+  > "$APP_LOGS/fastqc_slurm_array_${sample_id}.log" 2>&1
