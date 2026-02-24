@@ -10,24 +10,26 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 ## Workshop Map
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'darkMode': true }}}%%
-mindmap
-  root((Slurm Workshop))
-    Part 1: Scripts
-      Workspace Setup
-      Benchmarking
-      GNU Parallel
-    Part 2: Batch Jobs
-      SLURM Basics
-      Job Submission
-      Efficiency (seff)
-    Part 3: Arrays
-      Job Arrays
-      Task Logs
-      Failure Recovery
-    Part 4: Strategy
-      Decision Matrix
-      Real-World Scenarios
+graph LR
+  root((Slurm Workshop)) --> P1[Part 1: Scripts]
+  root --> P2[Part 2: Batch Jobs]
+  root --> P3[Part 3: Arrays]
+  root --> P4[Part 4: Strategy]
+
+  P1 --> W[Workspace Setup]
+  P1 --> B[Benchmarking]
+  P1 --> G[GNU Parallel]
+
+  P2 --> S[SLURM Basics]
+  P2 --> J[Job Submission]
+  P2 --> E[Efficiency / seff]
+
+  P3 --> A[Job Arrays]
+  P3 --> T[Task Logs]
+  P3 --> F[Failure Recovery]
+
+  P4 --> D[Decision Matrix]
+  P4 --> R[Real-World Scenarios]
 ```
 
 ## Curriculum
