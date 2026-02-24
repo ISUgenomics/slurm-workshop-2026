@@ -5,7 +5,7 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 ## Instructors
 - Viswanathan Satheesh
 - Rick Masonbrink
-- SharuPaul Sharma
+- Sharu Paul Sharma
 
 ## Email: 
 If you have any questions/suggestions: gifhelp@iastate.edu
