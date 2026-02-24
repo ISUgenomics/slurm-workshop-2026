@@ -10,6 +10,7 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 ## Workshop Map
 
 ```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'darkMode': true }}}%%
 mindmap
   root((Slurm Workshop))
     Part 1: Scripts
