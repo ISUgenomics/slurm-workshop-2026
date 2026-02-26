@@ -502,7 +502,7 @@ If you remember just one thing: you don’t run heavy work directly on the head 
 - **Partition (queue)**: A grouping of nodes with certain limits (e.g., time, size). You submit jobs to a partition.
 - **Account**: The project or allocation that pays for/authorizes compute usage.
 - **Resources**: CPUs/cores, memory (RAM), time limit.
-- **Job states**: PENDING (PD, waiting), RUNNING (R), COMPLETED (CD), FAILED (F), CANCELLED (CA).
+- **Job states**: PENDING (PD, waiting), RUNNING (R), COMPLETED (CD), FAILED (F), CANCELLED (CA), COMPLETING (CG).
 
 ---
 
