@@ -1,10 +1,10 @@
 ## Part 3: SLURM Job Arrays
 
-**Goal**: The "Correct" way to handle independent tasks at scale.
+**Goal**: Learn when and how to schedule many similar, independent tasks at scale.
 
 ### What is a Job Array?
-A Job Array is a single job submission that spawns multiple "tasks".
-- **One Job ID** (Master ID), but many **Array Indices** (e.g., `8250375_0`, `8250375_1`).
+A job array is one submission that creates multiple independently scheduled array elements.
+- The submission has a parent array ID, and each element has an array index. Most Slurm commands accept the combined form `<parent_id>_<index>` (for example, `8250375_0` or `8250375_1`). Each running element also has its own `SLURM_JOB_ID`.
 
 **Why use Arrays?**
 - **Independent**: If Task 5 fails, Task 6 still runs.
@@ -29,7 +29,7 @@ Create `00_scripts/07_fastqc_array.slurm`:
 #SBATCH --partition=interactive
 #SBATCH --time=00:05:00
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
 # Use master job ID (%A) and array index (%a) for per-task logs
 #SBATCH --output=slurm_logs/%x_%A_%a.out
@@ -49,8 +49,8 @@ APP_LOGS=app_logs
 # Ensure output directories exist
 mkdir -p $SLURM_LOGS $APP_LOGS $OUTPUT_DIR
 
-# Optional: load modules needed by the job
-module load fastqc || true
+# Load modules needed by the job
+module load fastqc
 
 # Build the file list. The array index selects which file this task processes.
 FILES=(01_data/*.fastq.gz)
@@ -65,18 +65,19 @@ fastqc "$TARGET" -o $OUTPUT_DIR/ \
 
 ### How it works
 
-- `--array=0-9` launches 10 tasks with `SLURM_ARRAY_TASK_ID` set to 0..9.
-- Inside the script, `FILES=(01_data/*.fastq.gz)` builds the list of inputs; each task picks `FILES[$SLURM_ARRAY_TASK_ID]`.
-- `--cpus-per-task=1` and `--mem=2G` are per-task requests. With arrays, parallelism comes from many tasks; keep per-task CPU/memory modest.
+- `--array=0-9` launches 10 array elements with `SLURM_ARRAY_TASK_ID` set to 0 through 9. This range must match the 10 files in the workshop dataset.
+- Inside the script, `FILES=(01_data/*.fastq.gz)` builds the list of inputs; each array element picks `FILES[$SLURM_ARRAY_TASK_ID]`.
+- `--cpus-per-task=1` and `--mem=2G` are per-element requests. With arrays, parallelism comes from many elements; keep each CPU and memory request aligned with one FastQC process.
 - Log patterns `%A` (master job ID) and `%a` (array index) help separate per-task stdout/stderr.
 
 Tips:
 - If your files can be very large, increase `--time` and `--mem` per task accordingly.
 - Avoid combining GNU Parallel with large arrays unless you adjust `--cpus-per-task` and the tool’s `-j/--threads` to avoid oversubscription.
 
-Submit for all files in `01_data/`:
+Submit for all files in `01_data/`. Create `slurm_logs/` before submission because Slurm opens the output and error files before the script starts:
 
 ```bash
+mkdir -p slurm_logs
 sbatch 00_scripts/07_fastqc_array.slurm
 ```
 
@@ -105,21 +106,23 @@ squeue -u $USER
 
 **Explanation of the output**
 
-JOBID: 8250375_0, 8250375_2, …, 8250375_9
-8250375 is the master job ID; the suffix _ is the array task index (0–9). Each line is one array task.
+`8250375` is the parent array ID, and the suffix after `_` is the array index (0–9). For example, `8250375_2` identifies index 2. Each line represents one array element.
 
-**Alternative:Count files and submit a matching array**
+**Alternative: Count files and submit a matching array**
 
 ```bash
 # Count files and submit a matching array
-N=$(ls 01_data/*.fastq.gz | wc -l)
-sbatch --array=0-$((N-1)) 00_scripts/07_fastqc_array.slurm
+shopt -s nullglob
+FILES=(01_data/*.fastq.gz)
+N=${#FILES[@]}
+(( N > 0 )) || { echo "No FASTQ files found" >&2; exit 1; }
+sbatch --array="0-$((N - 1))" 00_scripts/07_fastqc_array.slurm
 
 # Alternatively, if you know there are 10 files (0..9):
 # sbatch --array=0-9 00_scripts/07_fastqc_array.slurm
 ```
 
-**seff the job**
+**Check one array element with `seff`**
 
 ```bash
 seff 8250375_0
@@ -143,7 +146,7 @@ Memory Efficiency: 14.78% of 2.00 GB (2.00 GB/node)
 </pre>
 </details>
 
-**sacct the job**
+**Inspect the complete array with `sacct`**
 
 ```bash
 sacct -j 8250375 --format=JobID,JobName%20,State,Elapsed,MaxRSS,AllocCPUS,CPUTime,ExitCode
@@ -155,9 +158,9 @@ sacct -j 8250375 --format=JobID,JobName%20,State,Elapsed,MaxRSS,AllocCPUS,CPUTim
 - `JobName`: The job name.
 - `State`: The state of the job. `COMPLETED` means the job finished successfully.
 - `Elapsed`: The elapsed wall time.
-- `MaxRSS`: The peak memory usage.
+- `MaxRSS`: The maximum resident memory recorded for a job step. 
 - `AllocCPUS`: The number of allocated CPUs.
-- `CPUTime`: The CPU time used.
+- `CPUTime`: Allocated core-wall time (`Elapsed × AllocCPUS`), not measured CPU use. Use `TotalCPU` or `seff` when you need actual CPU consumption.
 - `ExitCode`: The exit code of the job.
 
 <details>
@@ -203,7 +206,7 @@ JobID                     JobName      State    Elapsed     MaxRSS  AllocCPUS   
 - `8250375_0.ext+` (extern) → the extern step, which tracks resource usage tied to the allocation itself (not your script directly).
 - `8250375_1` → the array task with index 1, and so on.
 
-So each array task has a main job entry, plus `.batch` and `.extern` sub-entries.
+Each array element therefore has a main accounting entry plus `.batch` and `.extern` step entries. The table is from the same earlier two-CPU run shown in the `seff` example.
 
 **More Reading**
 
@@ -245,10 +248,13 @@ So each array task has a main job entry, plus `.batch` and `.extern` sub-entries
       'fastqc {1} -o 02h_fastqc_parallel/ > logs/02h_fastqc_parallel_{1/.}.log 2>&1' \
       ::: 01_data/*.fastq.gz
     ```
-  - SLURM Array: keep per-task CPU/memory modest (e.g., --cpus-per-task=1–2, --mem=1–4G) and let SLURM scale via many tasks.
+  - SLURM Array: keep per-element CPU/memory requests modest (e.g., `--cpus-per-task=1–2`, `--mem=1–4G`) and let SLURM scale via many elements.
     ```bash
-    N=$(ls 01_data/*.fastq.gz | wc -l)
-    sbatch --array=0-$((N-1)) 00_scripts/07_fastqc_array.slurm
+    shopt -s nullglob
+    FILES=(01_data/*.fastq.gz)
+    N=${#FILES[@]}
+    (( N > 0 )) || { echo "No FASTQ files found" >&2; exit 1; }
+    sbatch --array="0-$((N - 1))" 00_scripts/07_fastqc_array.slurm
     ```
 
 - Rules of thumb
@@ -267,13 +273,13 @@ Imagine you ran 100 jobs.
 - Tasks 47-88: Success
 - Task 89: FAILED
 
-You don't want to re-run everything. Check which IDs failed (look at logs or `sacct`).
-Then submit **only the holes**:
+You do not need to rerun every input. Identify failed indices with the logs or `sacct`, and then submit only the failed indices.
 
 ```bash
 sbatch --array=46,89 00_scripts/07_fastqc_array.slurm
 ```
-Slurm allows comma-separated lists and ranges!
+
+Slurm accepts comma-separated indices and ranges. This command creates a new parent array ID, so use the new ID when checking status and logs.
 
 
 
@@ -281,19 +287,22 @@ Slurm allows comma-separated lists and ranges!
 
 ## Part 4: Strategy, Flowcharts & Wrap-up
 
-How do you choose between the different methods? Use this simple rule of thumb based on **Task Duration** and **Quantity**.
+How do you choose between the different methods? Start with task duration and quantity, and then account for per-task resources and local scheduler policy.
 
-### The Decision Matrix
+### Decision matrix
 
-| Task Duration | Number of Tasks | Best Strategy |
+These are starting points, not universal limits. 
+
+| Task Duration | Number of Tasks | Suggested Strategy |
 | :---: | :---: | :--- |
-| < 1 minute | Any | **GNU Parallel** |
-| 1-15 minutes | < 50 | **GNU Parallel** in a single job |
-| 1-15 minutes | 50-1000 | **GNU Parallel** split into multiple jobs |
-| 15 min - 4 hours | < 500 | **Slurm Job Array** |
-| 15 min - 4 hours | 500+ | **Slurm Job Array** with `%` throttle |
-| 4+ hours | Any | **Slurm Job Array** (consider checkpointing) |
-| 1000s of short tasks | Any | **Task Grouping** (bundle tasks into array elements) |
+| < 1 minute | Small enough for one node | **GNU Parallel** in one job |
+| < 1 minute | Too many for one node | **Task grouping** in a throttled array |
+| 1–15 minutes | < 50 | **GNU Parallel** in one job |
+| 1–15 minutes | 50–1,000 | **Task grouping** or a throttled array |
+| 15 minutes–4 hours | < 500 | **Slurm job array** |
+| 15 minutes–4 hours | 500+ | **Slurm job array** with a `%` throttle |
+| 4+ hours | Any | **Slurm job array**; consider checkpointing |
+| Thousands of short tasks | Any | **Task grouping** to reduce scheduler overhead |
 
 ### Real-World Scenarios
 
@@ -301,8 +310,8 @@ How do you choose between the different methods? Use this simple rule of thumb b
 > 5,000 images, each takes 3 seconds to resize.
 
 **Best choice**: **GNU Parallel**  
-- Tasks are too short for arrays (scheduler overhead would dominate this).
-- Pack into a single 2-hour job running 16 at a time.
+- Individual tasks are too short for one array element each because scheduler overhead would dominate.
+- At 16 concurrent tasks, the ideal compute time is about 16 minutes; request roughly 30 minutes to allow for startup and I/O, then refine the request from measured runs.
 
 #### Scenario 2: RNA-seq Alignment
 > 48 samples, each takes 2 hours, uses 8 CPUs and 32GB RAM.
@@ -333,9 +342,9 @@ How do you choose between the different methods? Use this simple rule of thumb b
 | `sacct -j <JOBID>` | View detailed accounting history of a job (or array) |
 
 **Key Script Directives**
-- `#SBATCH --time=HH:MM:SS` (Max runtime)
-- `#SBATCH --mem=8G` (Max memory per node)
-- `#SBATCH --cpus-per-task=4` (Number of cores)
+- `#SBATCH --time=HH:MM:SS` (requested runtime limit)
+- `#SBATCH --mem=8G` (requested memory per node)
+- `#SBATCH --cpus-per-task=4` (requested CPU cores per task)
 - `#SBATCH --array=0-9` (Job array indices)
 - `%A` and `%a` (Placeholders for Master Job ID and Array Index in `#SBATCH --output`)
 
