@@ -8,7 +8,7 @@ Welcome to the 2026 Slurm Workshop! This 4-hour session is designed to help you 
 - Sharu Paul Sharma
 
 ## Email: 
-If you have any questions/suggestions: gifhelp@iastate.edu
+If you have any questions/suggestions: bioinformatics@iastate.edu
 
 ## Workshop Goals
 - Understand how to measure and optimize job efficiency (`seff`).
